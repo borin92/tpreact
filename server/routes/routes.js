@@ -12,8 +12,14 @@ app.get("/", (req, res) => {
     res.json({ message: "Hello from server!" });
 });
 
+app.use('/login', (req, res) => {
+    res.send({
+        token: 'test123'
+    });
+});
+
 app.post("/add_user", urlencodedParser, async (req, response) => {
-    console.log(req.body);
+    console.log("test");
     const newUser = new userModel({
         name: req.body.name,
         age: req.body.age,
