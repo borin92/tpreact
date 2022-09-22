@@ -65,6 +65,32 @@ module.exports = class todos {
             }
         });
 
+        this.app.post('/todos/deleteAll', (req, res) => {
+            try {
+                this.todoModel.remove({}).then((user) => {
+
+                    res.status(200).json(user || {});
+
+                }).catch((err) => {
+
+                    console.log(err);
+
+                    res.status(200).json({ err });
+
+                });
+
+
+            }
+            catch (err) {
+                console.error(`[ERROR] post:todos -> ${err}`);
+
+                res.status(400).json({
+                    code: 400,
+                    message: 'Bad Request'
+                });
+            }
+        });
+
         this.app.get('/todos/getOne', (req, res) => {
             try {
                 this.todoModel.findOne({
@@ -90,7 +116,7 @@ module.exports = class todos {
         });
         this.app.get('/todos/getAll', async (req, res) => {
             try {
-                this.todoModel.find().then(dbtodoData => {
+                this.todoModel.find().sort({ _id: -1 }).then(dbtodoData => {
                     if (!dbtodoData) {
                         res.status(404).json({
                             message: 'No todo found with this id.'

@@ -4,6 +4,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Card from '@mui/material/Card';
 import { useQueryClient } from 'react-query';
 
+import Button from '@mui/material/Button';
+
 
 import Typography from '@mui/material/Typography';
 import {
@@ -29,6 +31,22 @@ const removeTodo = async (id, queryClient) => {
     return response;
 };
 
+const deleteAll = async (queryClient) => {
+
+    const { data: response } = await fetch('http://localhost:3000/todos/deleteAll', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(() => {
+            queryClient.invalidateQueries('todos')
+        });
+    return response;
+};
+
 
 
 function TodoList() {
@@ -44,15 +62,23 @@ function TodoList() {
         return <div>Loading...</div>;
 
     }
+
     return (
-        todos.map(todo =>
-            <> <Card ><Typography>{todo.title}</Typography><IconButton aria-label="delete">
-                <DeleteIcon id={todo.id} onClick={(e) => removeTodo(e.target.parentElement.id, queryClient)} />
-            </IconButton></Card>
-            </>
+        <>
+            <Button color="error" variant="contained" onClick={() => deleteAll(queryClient)} > Delete all</Button >
 
-        )
+            {
+                todos.map(todo =>
+                    <Card >
+                        <Typography>{todo.title}</Typography>
+                        <IconButton aria-label="delete">
+                            <DeleteIcon id={todo.id} onClick={(e) => removeTodo(e.target.parentElement.id, queryClient)} />
+                        </IconButton>
+                    </Card>
+                )
 
+            }
+        </>
     )
 
 }
