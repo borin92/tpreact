@@ -64,6 +64,22 @@ const deleteAll = async (queryClient) => {
     return response;
 };
 
+const deleteAllDone = async (queryClient) => {
+
+    const { data: response } = await fetch('http://localhost:3000/todos/deleteAllDone', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(() => {
+            queryClient.invalidateQueries('todos')
+        });
+    return response;
+};
+
 
 
 function TodoList() {
@@ -83,6 +99,7 @@ function TodoList() {
     return (
         <>
             <Button color="error" variant="contained" onClick={() => deleteAll(queryClient)} > Delete all</Button >
+            <Button color="error" variant="contained" onClick={() => deleteAllDone(queryClient)} > Delete all done</Button >
 
             {
                 todos.map(todo =>
@@ -92,7 +109,7 @@ function TodoList() {
                             <DeleteIcon id={todo.id} onClick={(e) => removeTodo(e.target.parentElement.id, queryClient)} />
                         </IconButton>
 
-                        <Checkbox id={todo.id} onClick={(e) => toggleTodo(e.target.id, queryClient)} defaultChecked={todo.state} />
+                        <Checkbox id={todo.id} onClick={(e) => toggleTodo(e.target.id, queryClient)} defaultChecked={!todo.state} />
                     </Card>
                 )
 
