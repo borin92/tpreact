@@ -6,7 +6,7 @@ const Schema = new mongoose.Schema(
       type: String,
     },
     state: {
-      type: String,
+      type: Boolean,
     }
   },
   {

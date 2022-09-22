@@ -14,7 +14,7 @@ module.exports = class todos {
         });
         this.app.post('/todos/add', (req, res) => {
             try {
-                const todoModel = new this.todoModel({ title: req.body.title, state: "active" });
+                const todoModel = new this.todoModel({ title: req.body.title, state: true });
                 console.log(todoModel)
                 todoModel.save().then((todo) => {
 
@@ -114,6 +114,34 @@ module.exports = class todos {
                 });
             }
         });
+
+        this.app.post('/todos/toggleTodo', (req, res) => {
+            try {
+                this.todoModel.findOne({
+                    _id: req.body.id
+                }, function (err, todo) {
+                    todo.state = !todo.state
+                    todo.save().then(dbtodoData => {
+                        if (!dbtodoData) {
+                            res.status(404).json({
+                                message: 'No todo found with this id.'
+                            });
+                            return;
+                        }
+                        res.json(dbtodoData);
+                    })
+                })
+            }
+            catch (err) {
+                console.error(`[ERROR] post:todos -> ${err}`);
+
+                res.status(400).json({
+                    code: 400,
+                    message: 'Bad Request'
+                });
+            }
+        });
+
         this.app.get('/todos/getAll', async (req, res) => {
             try {
                 this.todoModel.find().sort({ _id: -1 }).then(dbtodoData => {
