@@ -14,7 +14,8 @@ module.exports = class todos {
         });
         this.app.post('/todos/add', (req, res) => {
             try {
-                const todoModel = new this.todoModel(req.body);
+                const todoModel = new this.todoModel({ title: req.body.title, state: "active" });
+                console.log(todoModel)
                 todoModel.save().then((todo) => {
 
                     res.status(200).json(todo || {});
