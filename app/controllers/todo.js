@@ -169,6 +169,33 @@ module.exports = class todos {
             }
         });
 
+        this.app.post('/todos/editOne', (req, res) => {
+            try {
+                this.todoModel.findOne({
+                    _id: req.body.id
+                }, function (err, todo) {
+                    todo.title = req.body.title
+                    todo.save().then(dbtodoData => {
+                        if (!dbtodoData) {
+                            res.status(404).json({
+                                message: 'No todo found with this id.'
+                            });
+                            return;
+                        }
+                        res.json(dbtodoData);
+                    })
+                })
+            }
+            catch (err) {
+                console.error(`[ERROR] post:todos -> ${err}`);
+
+                res.status(400).json({
+                    code: 400,
+                    message: 'Bad Request'
+                });
+            }
+        });
+
         this.app.get('/todos/getAll', async (req, res) => {
             try {
                 this.todoModel.find().sort({ _id: -1 }).then(dbtodoData => {

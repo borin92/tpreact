@@ -1,4 +1,4 @@
-import { React, useCallback } from 'react';
+import { React, useState, useCallback, useEffect } from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Card from '@mui/material/Card';
@@ -86,34 +86,47 @@ function TodoList() {
 
     const queryClient = useQueryClient();
     // const [list, setlist] = useState(null)
+    const [list, setlist] = useState()
 
     const { data: todos, isLoading } = useQuery('todos', () => fetch("http://localhost:3000/todos/getAll").then((res) => res.json()))
+    useEffect(() => {
+        if (!isLoading) {
+            setlist(todos);
+        }
+
+    }, [isLoading, todos])
 
 
-    if (isLoading) {
-
+    if (isLoading || !todos) {
         return <div>Loading...</div>;
 
     }
 
+
+
     return (
         <>
-            <Button color="error" variant="contained" onClick={() => deleteAll(queryClient)} > Delete all</Button >
-            <Button color="error" variant="contained" onClick={() => deleteAllDone(queryClient)} > Delete all done</Button >
+            <Button color="info" variant="contained" onClick={() => setlist(todos)} > display all</Button >
+            <Button color="success" variant="contained" onClick={() => setlist(todos.filter(e => e.state === true))} > display all done</Button >
+            <Button color="warning" variant="contained" onClick={() => setlist(todos.filter(e => e.state === false))} > display all active</Button >
 
             {
-                todos.map(todo =>
+                list && list.map(todo =>
                     <Card >
                         <Typography>{todo.title}</Typography>
                         <IconButton aria-label="delete">
                             <DeleteIcon id={todo.id} onClick={(e) => removeTodo(e.target.parentElement.id, queryClient)} />
                         </IconButton>
 
-                        <Checkbox id={todo.id} onClick={(e) => toggleTodo(e.target.id, queryClient)} defaultChecked={!todo.state} />
+                        <Checkbox checked={todo.state} id={todo.id} onClick={(e) => toggleTodo(e.target.id, queryClient)} />
                     </Card>
                 )
 
             }
+            <Button color="error" variant="contained" onClick={() => deleteAll(queryClient)} > Delete all</Button >
+            <Button color="error" variant="contained" onClick={() => deleteAllDone(queryClient)} > Delete all done</Button >
+
+
         </>
     )
 
