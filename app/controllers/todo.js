@@ -14,7 +14,7 @@ module.exports = class todos {
         });
         this.app.post('/todos/add', (req, res) => {
             try {
-                const todoModel = new this.todoModel({ title: req.body.title, state: true });
+                const todoModel = new this.todoModel({ title: req.body.title, state: false });
                 console.log(todoModel)
                 todoModel.save().then((todo) => {
 
@@ -93,7 +93,7 @@ module.exports = class todos {
 
         this.app.post('/todos/deleteAllDone', (req, res) => {
             try {
-                this.todoModel.deleteMany({ state: false }).then((user) => {
+                this.todoModel.deleteMany({ state: true }).then((user) => {
 
                     res.status(200).json(user || {});
 

@@ -1,5 +1,6 @@
 import { React, useState, useCallback, useEffect } from 'react';
 import IconButton from '@mui/material/IconButton';
+import Grid from '@mui/material/Grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Card from '@mui/material/Card';
 import { useQueryClient } from 'react-query';
@@ -10,6 +11,16 @@ import {
     useQuery,
 } from 'react-query'
 
+import { makeStyles } from '@material-ui/core/styles';
+const useStyles = makeStyles(theme => ({
+    button: {
+        marginTop: "15px!important",
+        marginRight: "15px!important"
+    },
+    card: {
+        marginBottom: "25px",
+    }
+}));
 const removeTodo = async (id, queryClient) => {
     if (!id) return null
     const { data: response } = await fetch('http://localhost:3000/todos/delete', {
@@ -83,6 +94,7 @@ const deleteAllDone = async (queryClient) => {
 
 
 function TodoList() {
+    const classes = useStyles();
 
     const queryClient = useQueryClient();
     // const [list, setlist] = useState(null)
@@ -106,25 +118,37 @@ function TodoList() {
 
     return (
         <>
-            <Button color="info" variant="contained" onClick={() => setlist(todos)} > display all</Button >
-            <Button color="success" variant="contained" onClick={() => setlist(todos.filter(e => e.state === true))} > display all done</Button >
-            <Button color="warning" variant="contained" onClick={() => setlist(todos.filter(e => e.state === false))} > display all active</Button >
+            <Grid container spacing={6} direction={"column"} alignContent={"center"}>
+                <Grid item direction={"row"}>
+                    <Button className={classes.button} size='small' color="info" variant="contained" onClick={() => setlist(todos)} > display all</Button >
+                    <Button className={classes.button} size='small' color="success" variant="contained" onClick={() => setlist(todos.filter(e => e.state === true))} > display all done</Button >
+                    <Button className={classes.button} size='small' color="warning" variant="contained" onClick={() => setlist(todos.filter(e => e.state === false))} > display all active</Button >
 
-            {
-                list && list.map(todo =>
-                    <Card >
-                        <Typography>{todo.title}</Typography>
-                        <IconButton aria-label="delete">
-                            <DeleteIcon id={todo.id} onClick={(e) => removeTodo(e.target.parentElement.id, queryClient)} />
-                        </IconButton>
+                </Grid>
 
-                        <Checkbox checked={todo.state} id={todo.id} onClick={(e) => toggleTodo(e.target.id, queryClient)} />
-                    </Card>
-                )
+                <Grid item>
 
-            }
-            <Button color="error" variant="contained" onClick={() => deleteAll(queryClient)} > Delete all</Button >
-            <Button color="error" variant="contained" onClick={() => deleteAllDone(queryClient)} > Delete all done</Button >
+                    {
+                        list && list.map(todo =>
+                            <Card className={classes.card}>
+                                <Typography>{todo.title}</Typography>
+                                <IconButton aria-label="delete">
+                                    <DeleteIcon id={todo.id} onClick={(e) => removeTodo(e.target.parentElement.id, queryClient)} />
+                                </IconButton>
+
+                                <Checkbox checked={todo.state} id={todo.id} onClick={(e) => toggleTodo(e.target.id, queryClient)} />
+                            </Card>
+                        )
+
+                    }
+                </Grid>
+                <Grid item direction="row">
+                    <Button className={classes.button} size='small' color="error" variant="contained" onClick={() => deleteAll(queryClient)} > Delete all</Button >
+                    <Button className={classes.button} size='small' color="error" variant="contained" onClick={() => deleteAllDone(queryClient)} > Delete all done</Button >
+
+                </Grid>
+            </Grid>
+
 
 
         </>

@@ -6,10 +6,16 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import NoteIcon from '@mui/icons-material/Note';
 import TextField from '@mui/material/TextField';
-
-import { useMutation, useQueryClient } from 'react-query';
-
+import { useQueryClient } from 'react-query';
 import InputAdornment from '@mui/material/InputAdornment';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+    cardHeader: {
+        margin: "0 auto!important"
+    }
+
+}));
 
 const createTodo = async (title, queryClient) => {
     if (!title) return null
@@ -36,7 +42,7 @@ const createTodo = async (title, queryClient) => {
 const TodoInput = () => {
     const queryClient = useQueryClient();
     const [newTodo, setnewTodo] = useState()
-
+    const classes = useStyles();
 
     const handleChange = ((e) => {
         setnewTodo(e.target.value)
@@ -51,14 +57,14 @@ const TodoInput = () => {
     )
 
     return (
-        <Card sx={{ maxWidth: 345 }}>
+        <Card mb={5} sx={{ maxWidth: 345 }} className={classes.cardHeader}>
 
-            <CardContent>
+            <CardContent >
                 <TextField
                     onChange={handleChange}
                     fullWidth
                     id="input-with-icon-textfield"
-                    label="TextField"
+                    label="create a todo"
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
